@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEMAPA IoT - Dashboard</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="bg-light">
+
+    <aside class="sidebar shadow-lg">
+        <div class="sidebar__header p-4 text-center">
+            <i class="fas fa-droplet fs-1 text-primary mb-2"></i>
+            <h2 class="sidebar__title fs-4 fw-bold text-white m-0">SEMAPA <span class="text-info">IoT</span></h2>
+        </div>
+        
+        <hr class="text-secondary mx-3">
+
+        <nav class="sidebar__nav p-3">
+            <p class="text-uppercase text-secondary small fw-bold mb-3 px-3">Estratégico</p>
+            <a href="/dashboard/alcaldia" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-city me-3"></i> Alcaldía
+            </a>
+            <a href="/dashboard/sostenibilidad" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-leaf me-3"></i> Sostenibilidad
+            </a>
+            <a href="/dashboard/infraestructura" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-microchip me-3"></i> Infraestructura
+            </a>
+
+            <p class="text-uppercase text-secondary small fw-bold mt-4 mb-3 px-3">Gestión Comercial</p>
+            <a href="/contratos/lista" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-file-invoice me-3"></i> Contratos
+            </a>
+            <a href="/preavisos/lista" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-envelope-open-text me-3"></i> Preavisos
+            </a>
+            <a href="/lecturas/registrar" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-clipboard-check me-3"></i> Registro Lecturas
+            </a>
+
+            <p class="text-uppercase text-secondary small fw-bold mt-4 mb-3 px-3">Sistema</p>
+            <a href="/logout" class="sidebar__nav-item sidebar__nav-item--logout d-flex align-items-center">
+                <i class="fas fa-sign-out-alt me-3"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+</html>

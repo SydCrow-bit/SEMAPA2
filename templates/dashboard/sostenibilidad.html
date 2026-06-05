@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- ENCABEZADO DEL DASHBOARD -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-dark fw-bold">
+                <i class="fas fa-leaf text-success me-2"></i>Dashboard de Sostenibilidad Hídrica
+            </h1>
+            <p class="text-muted mb-0">Indicadores de eficiencia y consumo diario per cápita por distritos.</p>
+        </div>
+    </div>
+
+    <!-- PROCESAMIENTO DE DATOS EN JINJA2 (Cálculos en tiempo real para las tarjetas) -->
+    {% set total_litros_ciudad = namespace(value=0) %}
+    {% set total_habitantes_ciudad = namespace(value=0) %}
+    {% set distritos_criticos = namespace(value=0) %}
+    {% set max_consumo = namespace(value=0) %}
+    {% set distrito_max = namespace(value="") %}
+
+    {% for d in datos %}
+        {% set total_litros_ciudad.value = total_litros_ciudad.value + (d.litros_persona_dia * d.habitantes) %}
+        {% set total_habitantes_ciudad.value = total_habitantes_ciudad.value + d.habitantes %}
+        
+        {% if d.litros_persona_dia > 300 %}
+            {% set distritos_criticos.value = distritos_criticos.value + 1 %}
+        {% endif %}
+
+        {% if d.litros_persona_dia > max_consumo.value %}
+            {% set max_consumo.value = d.litros_persona_dia %}
+            {% set distrito_max.value = d.distrito %}
+        {% endif %}
+    {% endfor %}
+
+    {% if total_habitantes_ciudad.value > 0 %}
+        {% set promedio_ciudad = total_litros_ciudad.value / total_habitantes_ciudad.value %}
+    {% else %}
+        {% set promedio_ciudad = 0 %}
+    {% endif %}
+
+    <!-- 1. SECCIÓN DE TARJETAS KPI -->
+    <div class="row g-3 mb-4">
+        <!-- Tarjeta: Promedio General Ciudad -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm border-start border-primary border-4 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-uppercase text-muted small fw-bold mb-1">Promedio Ciudad</p>
+                        <h3 class="fw-bold mb-0 text-dark">{{ "%.1f"|format(promedio_ciudad) }} <span class="fs-6 text-muted">L/hab/día</span></h3>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3">
+                        <i class="fas fa-tint fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta: Estado General -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            {% if promedio_ciudad <= 300 %}
+                <div class="card h-100 border-0 shadow-sm border-start border-success border-4 p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-uppercase text-muted small fw-bold mb-1">Estado General</p>
+                            <h4 class="fw-bold text-success mb-0">SOSTENIBLE</h4>
+                        </div>
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle p-3">
+                            <i class="fas fa-check-circle fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card h-100 border-0 shadow-sm border-start border-danger border-4 p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-uppercase text-muted small fw-bold mb-1">Estado General</p>
+                            <h4 class="fw-bold text-danger mb-0">SOBRECONSUMO</h4>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3">
+                            <i class="fas fa-exclamation-triangle fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Tarjeta: Zonas Críticas -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm border-start border-warning border-4 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-uppercase text-muted small fw-bold mb-1">Zonas Críticas</p>
+                        <h3 class="fw-bold mb-0 text-dark">{{ distritos_criticos.value }} <span class="fs-6 text-muted">Distritos</span></h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3">
+                        <i class="fas fa-exclamation-circle fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta: Mayor Derrochador -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm border-start border-danger border-4 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-uppercase text-muted small fw-bold mb-1">Mayor Derrochador</p>
+                        <h5 class="fw-bold mb-0 text-dark text-truncate" style="max-width: 150px;">{{ distrito_max.value if distrito_max.value else 'N/A' }}</h5>
+                        <small class="text-danger fw-bold">{{ "%.0f"|format(max_consumo.value) }} L/hab/día</small>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3">
+                        <i class="fas fa-fire-alt fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SECCIÓN DEL GRÁFICO DE BARRAS -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+                    <h5 class="m-0 fw-bold text-dark">
+                        <i class="fas fa-chart-bar text-primary me-2"></i>Análisis Comparativo del Consumo Diario por Distrito
+                    </h5>
+                    <span class="badge bg-secondary">Límite Crítico: 300 L/hab/día</span>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height:320px; width:100%">
+                        <canvas id="graficoSostenibilidad"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SECCIÓN DE LA TABLA DETALLADA -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="m-0 fw-bold text-dark">
+                        <i class="fas fa-table text-secondary me-2"></i>Auditoría e Interpretación del Consumo Territorial
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Distrito</th>
+                                    <th>Población Habitantes</th>
+                                    <th>Consumo Total (m³)</th>
+                                    <th>Consumo Per Cápita</th>
+                                    <th class="pe-4">Clasificación y Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in datos %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-secondary">{{ d.distrito }}</td>
+                                    <td>{{ "{:,}".format(d.habitantes) }} hab.</td>
+                                    <td>{{ "%.2f"|format(d.total_m3) }} m³</td>
+                                    <td class="fw-bold text-dark">{{ "%.1f"|format(d.litros_persona_dia) }} L/hab/día</td>
+                                    <td class="pe-4">
+                                        {% if d.litros_persona_dia <= 100 %}
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2">Nivel 1: Consumo ejemplar</span>
+                                        {% elif d.litros_persona_dia <= 180 %}
+                                            <span class="badge bg-success bg-opacity-25 text-success border border-success px-3 py-2">Nivel 2: Consumo responsable</span>
+                                        {% elif d.litros_persona_dia <= 250 %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 py-2 text-dark">Nivel 3: Consumo moderado</span>
+                                        {% elif d.litros_persona_dia <= 300 %}
+                                            <span class="badge bg-warning bg-opacity-25 text-warning border border-warning px-3 py-2 text-dark">Nivel 4: Consumo elevado</span>
+                                        {% elif d.litros_persona_dia <= 400 %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2">Nivel 5: Consumo inconsciente</span>
+                                        {% else %}
+                                            <span class="badge bg-danger bg-opacity-25 text-danger border border-danger px-3 py-2 fw-bold">Nivel 6: Crítico e insostenible</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">No se encontraron registros de consumo procesados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTENEDOR OCULTO PARA PASAR DATOS A JS SIN LEVANTAR ERRORES EN VS CODE -->
+<script id="datos-sostenibilidad-json" type="application/json">
+[
+    {% for d in datos %}
+    {
+        "distrito": "{{ d.distrito }}",
+        "litros": {{ d.litros_persona_dia | round(1) }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+
+<!-- Scripts requeridos externos e internos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/sostenibilidad.js') }}"></script>
+{% endblock %}

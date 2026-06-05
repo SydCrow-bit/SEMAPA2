@@ -1,0 +1,5 @@
+DB_HOST = "localhost"
+DB_NAME = "SEMAPA"
+DB_USER = "postgres"
+DB_PASSWORD = "passwoard"
+DB_PORT = "5432"

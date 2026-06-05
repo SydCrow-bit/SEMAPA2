@@ -1,0 +1,80 @@
+/* ==========================================
+   1. VARIABLES Y RESET
+   ========================================== */
+:root {
+    --sidebar-bg: #1a1c23;
+    --sidebar-hover: #2d3748;
+    --primary-blue: #3182ce;
+    --accent-info: #63b3ed;
+    --text-muted: #a0aec0;
+    --danger-red: #c53030;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f7f6; /* Un gris muy ligero para el fondo */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==========================================
+   2. ESTRUCTURA (LAYOUT)
+   ========================================== */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 260px; /* Espacio para el sidebar */
+    padding: 2rem;
+    width: calc(100% - 260px);
+}
+
+/* ==========================================
+   3. NAVEGACIÓN (SIDEBAR)
+   ========================================== */
+.sidebar__nav-item {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 4px 15px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar__nav-item:hover {
+    background-color: var(--sidebar-hover);
+    color: var(--accent-info);
+    padding-left: 25px;
+}
+
+.sidebar__nav-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar__nav-item--logout:hover {
+    background-color: var(--danger-red);
+    color: white;
+}
+
+/* ==========================================
+   4. COMPONENTES GLOBALES (Opcional)
+   ========================================== */
+/* Aquí puedes poner estilos para botones o tarjetas 
+   que se repitan en todo el sitio */
+.card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 12px;
+}

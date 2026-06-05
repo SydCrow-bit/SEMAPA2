@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <header class="dashboard-header d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center gap-3 mb-4">
+        <div class="dashboard-header__brand d-flex align-items-center gap-3">
+            <div class="dashboard-header__icon bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center rounded-3">
+                <i class="fas fa-tools fs-3"></i>
+            </div>
+            <div>
+                <h1 class="dashboard-header__title h3 mb-1 fw-bold text-dark">Infraestructura y Soporte Técnico</h1>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 rounded-pill px-2.5 py-1">
+                        <i class="fas fa-microchip me-1"></i> Monitoreo Hardware IoT
+                    </span>
+                    <div class="dashboard-header__date text-muted small fw-medium" id="fecha-actual"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm d-flex flex-row align-items-center gap-3 border-0 border-top border-danger border-4">
+                <div class="stat-card__icon text-danger"><i class="fas fa-broadcast-tower"></i></div>
+                <div>
+                    <h3 class="text-muted small mb-1 fw-semibold">Radio Bases (Antenas)</h3>
+                    <p class="fs-3 fw-bold m-0 text-dark">{{ stats.total_antenas }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm d-flex flex-row align-items-center gap-3 border-0 border-top border-dark border-4">
+                <div class="stat-card__icon text-dark"><i class="fas fa-exclamation-triangle"></i></div>
+                <div>
+                    <h3 class="text-muted small mb-1 fw-semibold">Tipos de Error en Catálogo</h3>
+                    <p class="fs-3 fw-bold m-0 text-dark">{{ stats.tipos_error_registrados }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm d-flex flex-row align-items-center gap-3 border-0 border-top border-warning border-4">
+                <div class="stat-card__icon text-warning"><i class="fas fa-bell"></i></div>
+                <div>
+                    <h3 class="text-muted small mb-1 fw-semibold">Incidentes Activos (Hoy)</h3>
+                    <p class="fs-3 fw-bold m-0 text-dark">{{ stats.alertas_criticas_hoy }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white pt-3 border-0">
+            <ul class="nav nav-tabs card-header-tabs" id="infraestructuraTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold px-4" id="antenas-tab" data-bs-toggle="tab" data-bs-target="#antenas-pane" type="button" role="tab" aria-controls="antenas-pane" aria-selected="true">
+                        <i class="fas fa-network-wired me-2"></i>Radio Bases (`radionbases`)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold px-4" id="errores-tab" data-bs-toggle="tab" data-bs-target="#errores-pane" type="button" role="tab" aria-controls="errores-pane" aria-selected="false">
+                        <i class="fas fa-bug me-2"></i>Catálogo de Errores (`catalogo_errores`)
+                    </button>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="card-body p-4">
+            <div class="tab-content" id="infraestructuraTabsContent">
+                
+                <div class="tab-pane fade show active" id="antenas-pane" role="tabpanel" aria-labelledby="antenas-tab" tabindex="0">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="h5 m-0 fw-bold text-dark text-uppercase tracking-wider">Estaciones Concentradoras Registradas</h4>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle border-light">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="py-3 text-muted px-4" style="width: 30%">Código Radio Base</th>
+                                    <th scope="col" class="py-3 text-muted">Tipo de Frecuencia</th>
+                                    <th scope="col" class="py-3 text-muted">Cobertura</th>
+                                    <th scope="col" class="py-3 text-muted text-center" style="width: 20%">Estado Operativo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if antenas %}
+                                    {% for antena in antenas %}
+                                    <tr>
+                                        <td class="fw-bold text-primary px-4">
+                                            <i class="fas fa-satellite-dish me-2 opacity-70"></i> Base #{{ antena.id_antena }}
+                                        </td>
+                                        <td><span class="text-secondary small fw-medium">LoRaWAN 915 MHz</span></td>
+                                        <td><span class="badge bg-light text-dark border">Urbana (Omnidireccional)</span></td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-3 py-1.5 rounded-pill">
+                                                <i class="fas fa-check-circle me-1"></i> En Línea
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">
+                                            <i class="fas fa-folder-open d-block fs-2 mb-2 opacity-50"></i>
+                                            No se encontraron radio bases registradas en la tabla `radionbases`.
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="errores-pane" role="tabpanel" aria-labelledby="errores-tab" tabindex="0">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="h5 m-0 fw-bold text-dark text-uppercase tracking-wider">Códigos de Diagnóstico del Sistema</h4>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle border-light">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="py-3 text-muted px-4" style="width: 20%">ID Error</th>
+                                    <th scope="col" class="py-3 text-muted">Descripción Técnica del Fallo</th>
+                                    <th scope="col" class="py-3 text-muted text-center" style="width: 25%">Severidad del Sistema</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if errores %}
+                                    {% for error in errores %}
+                                    <tr>
+                                        <td class="fw-bold text-dark px-4">
+                                            <span class="font-monospace bg-light px-2 py-1 rounded border text-secondary" style="font-size: 0.85rem;">
+                                                ERR-0{{ error.id_error }}
+                                            </span>
+                                        </td>
+                                        <td class="fw-medium text-secondary">
+                                            {{ error.descripcion_error or "Fallo de telemetría sin descripción especificada" }}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if error.id_error in [1, 2, 3] %}
+                                                <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 px-3 py-1.5 rounded-pill w-75">
+                                                    <i class="fas fa-fire me-1"></i> Crítica
+                                                </span>
+                                            {% elif error.id_error in [4, 5, 6] %}
+                                                <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25 px-3 py-1.5 rounded-pill w-75">
+                                                    <i class="fas fa-exclamation-circle me-1"></i> Advertencia
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-info-subtle text-info border border-info border-opacity-25 px-3 py-1.5 rounded-pill w-75">
+                                                    <i class="fas fa-info-circle me-1"></i> Informativa
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5 text-muted">
+                                            <i class="fas fa-folder-open d-block fs-2 mb-2 opacity-50"></i>
+                                            No se encontraron códigos de error en la tabla `catalogo_errores`.
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    <script src="{{ url_for('static', filename='js/infraestructura.js') }}" defer></script>
+{% endblock %}
