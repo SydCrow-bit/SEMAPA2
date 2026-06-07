@@ -1,0 +1,16 @@
+{
+  "short_name": "SEMAPA IoT",
+  "name": "SEMAPA - Registro de Campo",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3100/3100843.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/login",
+  "background_color": "#1e293b",
+  "theme_color": "#1e293b",
+  "display": "standalone",
+  "orientation": "portrait"
+}

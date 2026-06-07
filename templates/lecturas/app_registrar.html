@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>SEMAPA IoT - Inspector</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app_style.css') }}">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+                .then(reg => console.log("Service Worker activo", reg))
+                .catch(err => console.log("Fallo en sw", err));
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <div class="app-header d-flex justify-content-between align-items-center">
+        <a href="/logout" class="text-white text-decoration-none logout-btn" title="Cerrar sesión">
+            <i class="fas fa-sign-out-alt fa-lg"></i>
+        </a>
+        <span><i class="fas fa-droplet text-info me-1"></i> SEMAPA GESTIÓN</span>
+        <div style="width: 42px;"></div> 
+    </div>
+
+    <div class="container mt-4">
+        <div class="card-custom mb-4">
+            <h5 class="card-title-custom text-secondary"><i class="fas fa-search me-2 text-primary"></i>Identificar Medidor</h5>
+            <div class="input-group-custom">
+                <input type="text" id="medidor_id" class="form-control-custom text-uppercase" placeholder="Código del medidor IoT" autocomplete="off">
+                <button class="btn-search-inline" type="button" id="btn_buscar">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <small class="text-muted d-block mt-2 px-1" style="font-size: 0.8rem;">Ingrese el código serial impreso en el medidor físico.</small>
+        </div>
+
+        <div id="formulario_lectura" class="card-custom d-none">
+            <h5 class="card-title-custom text-success"><i class="fas fa-layer-group me-2"></i>Lectura en Campo</h5>
+            
+            <div class="mb-3">
+                <label class="label-custom">LECTURA ANTERIOR REGISTRADA (m³)</label>
+                <input type="number" id="lec_anterior" class="form-control-custom readonly-custom" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="label-custom" style="color: var(--accent-color);">NUEVA LECTURA ACTUAL (m³)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="lec_actual" class="form-control-custom" placeholder="0.00" style="border-color: rgba(2, 132, 199, 0.4);">
+            </div>
+
+            <div class="mb-4">
+                <label class="label-custom">ESTACIÓN RADIOBASE (OPCIONAL)</label>
+                <input type="text" id="radiobase" class="form-control-custom text-uppercase" placeholder="Ej. RB-LITORAL">
+            </div>
+
+            <button type="button" id="btn_enviar" class="btn btn-submit-custom w-100">
+                <i class="fas fa-save me-2"></i>Guardar Lectura
+            </button>
+        </div>
+        
+        <div id="alerta" class="alert alert-custom d-none mt-3 text-center" role="alert"></div>
+    </div>
+
+    <script>
+        const btnBuscar = document.getElementById('btn_buscar');
+        const btnEnviar = document.getElementById('btn_enviar');
+        const formLectura = document.getElementById('formulario_lectura');
+        const alerta = document.getElementById('alerta');
+
+        function mostrarAlerta(mensaje, tipo) {
+            let clases = `alert-custom mt-3 text-center alert alert-${tipo}`;
+            alerta.className = clases;
+            alerta.innerText = mensaje;
+            alerta.classList.remove('d-none');
+            setTimeout(() => alerta.classList.add('d-none'), 4000);
+        }
+
+        btnBuscar.addEventListener('click', async () => {
+            const medidor = document.getElementById('medidor_id').value.trim();
+            if (!medidor) return mostrarAlerta('Ingrese un código de medidor', 'warning');
+
+            try {
+                const respuesta = await fetch(`/api/lecturas/buscar/${medidor}`);
+                const datos = await respuesta.json();
+
+                if (datos.status === 'success') {
+                    document.getElementById('lec_anterior').value = datos.ultima_lectura;
+                    formLectura.classList.remove('d-none');
+                    document.getElementById('lec_actual').value = ''; 
+                    document.getElementById('lec_actual').focus();
+                } else {
+                    mostrarAlerta('Error al buscar el medidor', 'danger');
+                }
+            } catch (error) {
+                mostrarAlerta('No hay conexión con el servidor', 'danger');
+            }
+        });
+
+        btnEnviar.addEventListener('click', async () => {
+            const medidor = document.getElementById('medidor_id').value.trim();
+            const lec_anterior = parseFloat(document.getElementById('lec_anterior').value);
+            const lec_actual = parseFloat(document.getElementById('lec_actual').value);
+            const radiobase = document.getElementById('radiobase').value.trim();
+
+            if (isNaN(lec_actual)) return mostrarAlerta('Ingrese la lectura actual', 'warning');
+            if (lec_actual < lec_anterior) return mostrarAlerta('La lectura actual no puede ser menor a la anterior', 'danger');
+
+            const payload = {
+                medidor: medidor,
+                lec_anterior: lec_anterior,
+                lec_actual: lec_actual,
+                radiobase: radiobase
+            };
+
+            try {
+                const respuesta = await fetch('/api/lecturas/registrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const resultado = await respuesta.json();
+
+                if (respuesta.status === 201) {
+                    mostrarAlerta(resultado.message, 'success');
+                    document.getElementById('medidor_id').value = '';
+                    formLectura.classList.add('d-none');
+                } else {
+                    mostrarAlerta(resultado.message, 'danger');
+                }
+            } catch (error) {
+                mostrarAlerta('Error de red. Registro fallido.', 'danger');
+            }
+        });
+    </script>
+</body>
+</html>

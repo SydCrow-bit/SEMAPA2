@@ -1,0 +1,117 @@
+/* ==========================================================================
+   Estilos específicos para el Dashboard y la Tabla de Gestión de Contratos
+   ========================================================================== */
+
+/* Ajustes del contenedor del contenido principal */
+.main-content {
+    margin-left: 260px; /* Asegura el espacio para el sidebar */
+    padding: 24px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Redondeado inferior para el contenedor de la tabla responsiva */
+.table-responsive {
+    border-radius: 0 0 16px 16px;
+}
+
+/* Estilización avanzada para las cabeceras de la tabla */
+.table th {
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    background-color: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    padding: 12px 16px;
+}
+
+/* Transición suave para el efecto hover en las filas */
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/* Micro tipografías para subtextos secundarios */
+.text-xs {
+    font-size: 0.75rem !important;
+}
+
+/* Caja de búsqueda superior con enfoque táctil y limpio */
+.search-box input {
+    border-radius: 10px;
+    min-width: 280px;
+    padding: 8px 14px;
+    border: 2px solid #cbd5e1;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+    outline: none;
+}
+
+/* Botones de acción rápidos (Editar / Eliminar) */
+.btn-action {
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #e2e8f0 !important;
+    transform: translateY(-1px);
+}
+
+/* Badges (Etiquetas) de estado estilizadas estilo UI Moderna */
+.bg-success-subtle {
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
+}
+
+.bg-danger-subtle {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+}
+
+/* Clases de utilidad tipográfica */
+.italic {
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Ajustes y personalización para el Modal del CRUD
+   ========================================================================== */
+
+/* Etiquetas de formulario en miniatura pero legibles */
+.modal-body .form-label {
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+/* Inputs del modal con esquinas redondeadas y padding cómodo */
+.modal-body .form-control,
+.modal-body .form-select {
+    padding: 10px 14px;
+    font-size: 0.92rem;
+    border: 1px solid #cbd5e1;
+    transition: border-color 0.2s;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+/* Deshabilitado estético para la llave primaria (N° Contrato) en edición */
+.modal-body .form-control:disabled {
+    background-color: #e2e8f0;
+    color: #475569;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+}

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lista_contratos.css') }}">
+
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800 fw-bold"><i class="fas fa-file-invoice me-2 text-primary"></i>Gestión de Contratos</h1>
+            <p class="text-muted small mb-0">Administración y control del padrón de usuarios e infraestructura IoT.</p>
+        </div>
+        <button class="btn btn-primary shadow-sm px-4 py-2 row-btn" data-bs-toggle="modal" data-bs-target="#modalContrato" onclick="prepararCrear()">
+            <i class="fas fa-plus me-2"></i>Nuevo Contrato
+        </button>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-3 h-100 bg-white" style="border-left: 4px solid #0d6efd !important;">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary me-3"><i class="fas fa-users fa-lg"></i></div>
+                    <div>
+                        <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Titulares</h6>
+                        <h4 class="mb-0 fw-bold text-dark">{{ contratos|length }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-3 h-100 bg-white" style="border-left: 4px solid #10b981 !important;">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success me-3"><i class="fas fa-microchip fa-lg"></i></div>
+                    <div>
+                        <h6 class="text-muted small text-uppercase fw-bold mb-1">Medidores IoT</h6>
+                        <h4 class="mb-0 fw-bold text-dark" id="count_iot">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex flex-wrap gap-2 justify-content-between align-items-center">
+            <h5 class="m-0 fw-bold text-secondary">Base de Datos General</h5>
+            <div class="search-box">
+                <input type="text" id="tabla_buscar" class="form-control form-control-sm border-2" placeholder="Buscar por contrato o titular...">
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 px-3">
+                <thead class="table-light text-uppercase small fw-bold text-muted">
+                    <tr>
+                        <th class="ps-4">N° Contrato</th>
+                        <th>Titular / C.I.</th>
+                        <th>Catastro</th>
+                        <th>Categoría</th>
+                        <th>Medidor IoT</th>
+                        <th>Diámetro</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla_cuerpo" class="small">
+                    {% for c in contratos %}
+                    <tr id="fila-{{ c.numero_contrato }}">
+                        <td class="ps-4 fw-bold text-primary">{{ c.numero_contrato }}</td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ c.titular_contrato or 'SIN TITULAR' }}</div>
+                            <div class="text-muted text-xs">C.I: {{ c.ci_titular or 'N/A' }}</div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ c.numero_catastro or 'N/A' }}</span></td>
+                        <td>
+                            <div class="fw-semibold">{{ c.categoria }}</div>
+                            <div class="text-muted text-xs">{{ c.subcategoria }}</div>
+                        </td>
+                        <td>
+                            {% if c.medidor_iot %}
+                            <span class="text-dark fw-medium"><i class="fas fa-broadcast-tower text-info me-1"></i>{{ c.medidor_iot }}</span>
+                            {% else %}
+                            <span class="text-muted italic small">No asignado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ c.diametro_conexion or '1/2"' }}</td>
+                        <td>
+                            {% if c.estado_contrato|lower == 'activo' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill">Activo</span>
+                            {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill">{{ c.estado_contrato or 'Inactivo' }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-inline-flex gap-1">
+                                <button class="btn btn-sm btn-light border btn-action text-primary" title="Editar" onclick="editarContrato('{{ c.numero_contrato }}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-light border btn-action text-danger" title="Eliminar" onclick="eliminarContrato('{{ c.numero_contrato }}')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fas fa-folder-open fs-2 mb-2 d-block"></i> No se encontraron registros de contratos comerciales.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalContrato" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-dark text-white rounded-top-4 border-0 py-3">
+                <h5 class="modal-title fw-bold" id="modal_titulo"><i class="fas fa-file-contract me-2"></i>Formulario de Contrato</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form_contrato" onsubmit="guardarContrato(event)">
+                <div class="modal-body p-4 bg-light-subtle">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Número de Contrato *</label>
+                            <input type="text" class="form-control rounded-3" id="m_contrato" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Código Catastro</label>
+                            <input type="text" class="form-control rounded-3" id="m_catastro">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Titular Completo</label>
+                            <input type="text" class="form-control rounded-3" id="m_titular">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">C.I. / NIT</label>
+                            <input type="text" class="form-control rounded-3" id="m_ci">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Categoría</label>
+                            <select class="form-select rounded-3" id="m_categoria">
+                                <option value="DOMESTICO">DOMESTICO</option>
+                                <option value="COMERCIAL">COMERCIAL</option>
+                                <option value="INDUSTRIAL">INDUSTRIAL</option>
+                                <option value="ESTATAL">ESTATAL</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Subcategoría</label>
+                            <input type="text" class="form-control rounded-3" id="m_subcategoria" placeholder="Ej. R-1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Código Medidor IoT</label>
+                            <input type="text" class="form-control rounded-3 border-info" id="m_medidor" placeholder="Ej. IoT-512">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Fecha Contrato</label>
+                            <input type="date" class="form-control rounded-3" id="m_fecha">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Diámetro Conexión</label>
+                            <input type="text" class="form-control rounded-3" id="m_diametro" placeholder="Ej. 1/2 pulgadas">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Tipo Servicio</label>
+                            <input type="text" class="form-control rounded-3" id="m_servicio" placeholder="Agua y Alcantarillado">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-xs fw-bold text-muted text-uppercase">Estado Registro</label>
+                            <select class="form-select rounded-3" id="m_estado">
+                                <option value="ACTIVO">ACTIVO</option>
+                                <option value="INACTIVO">INACTIVO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light py-3 px-4">
+                    <button type="button" class="btn btn-secondary px-3 py-2 rounded-3" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 shadow-sm"><i class="fas fa-save me-2"></i>Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/lista_contratos.js') }}"></script>
+{% endblock %}

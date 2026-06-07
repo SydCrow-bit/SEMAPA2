@@ -1,12 +1,13 @@
 from database import get_connection
 
-# FUNCION 1: Búsqueda general (CORREGIDA para forzar coincidencia de texto en número_contrato)
+# ==========================================================================
+# 1. FUNCIONES EXISTENTES (Búsqueda, Filtros Geográficos e Infraestructura)
+# ==========================================================================
+
 def buscar_contrato_especifico(query):
     conn = get_connection()
     cur = conn.cursor() 
     
-    # Usamos CAST(c.numero_contrato AS TEXT) o c.numero_contrato::text 
-    # para asegurar que el formato 'CT-000000XX' sea perfectamente comparable con LIKE
     cur.execute("""
         SELECT c.numero_contrato, c.titular_contrato, i.latitud, i.longitud, 
                c.medidor_iot, c.tipo_servicio, c.categoria, i.distrito,
@@ -36,7 +37,6 @@ def buscar_contrato_especifico(query):
     conn.close()
     return resultados
 
-# FUNCION 2: Filtro por Tipo de Servicio (Manteniendo consistencia)
 def buscar_por_servicio(servicio):
     conn = get_connection()
     cur = conn.cursor() 
@@ -67,7 +67,6 @@ def buscar_por_servicio(servicio):
     conn.close()
     return resultados
 
-# FUNCION 3: Nueva función para Rango de Fechas
 def buscar_por_rango_fechas(fecha_inicio, fecha_fin):
     conn = get_connection()
     cur = conn.cursor() 
@@ -97,3 +96,109 @@ def buscar_por_rango_fechas(fecha_inicio, fecha_fin):
     cur.close()
     conn.close()
     return resultados
+
+
+# ==========================================================================
+# 2. FUNCIONES PARA LA TABLA GENERAL Y CRUD (Últimos 10 por fecha)
+# ==========================================================================
+
+def obtener_contratos():
+    """Obtiene únicamente los 10 últimos contratos ordenados por fecha de contrato"""
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    query = """
+        SELECT numero_contrato, numero_catastro, titular_contrato, ci_titular, 
+               categoria, subcategoria, medidor_iot, fecha_contrato, 
+               estado_contrato, diametro_conexion, tipo_servicio 
+        FROM contratos 
+        ORDER BY fecha_contrato DESC
+        LIMIT 10;
+    """
+    cur.execute(query)
+    
+    columnas = [desc[0] for desc in cur.description]
+    rows = cur.fetchall()
+    
+    # Mapeamos a diccionario para compatibilidad directa con Jinja2 en lista.html
+    contratos = [dict(zip(columnas, fila)) for fila in rows]
+    
+    cur.close()
+    conn.close()
+    return contratos
+
+def obtener_contrato_por_id(numero_contrato):
+    """Obtiene los campos de un contrato específico (Corregido nombre sin la 'c' intrusa)"""
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    query = "SELECT * FROM contratos WHERE numero_contrato = %s;"
+    cur.execute(query, (numero_contrato,))
+    
+    columnas = [desc[0] for desc in cur.description]
+    row = cur.fetchone()
+    
+    contrato = dict(zip(columnas, row)) if row else None
+    
+    cur.close()
+    conn.close()
+    return contrato
+
+def insertar_contrato(datos):
+    """Guarda un nuevo contrato comercial en la base de datos"""
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    query = """
+        INSERT INTO contratos (
+            numero_contrato, numero_catastro, titular_contrato, ci_titular, 
+            categoria, subcategoria, medidor_iot, fecha_contrato, 
+            diametro_conexion, tipo_servicio, estado_contrato
+        ) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    """
+    cur.execute(query, (
+        datos.get('numero_contrato'), datos.get('numero_catastro'), datos.get('titular_contrato'),
+        datos.get('ci_titular'), datos.get('categoria'), datos.get('subcategoria'),
+        datos.get('medidor_iot') or None, datos.get('fecha_contrato') or None,
+        datos.get('diametro_conexion'), datos.get('tipo_servicio'), datos.get('estado_contrato')
+    ))
+    
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def actualizar_contrato(numero_contrato, datos):
+    """Modifica los campos del contrato seleccionado"""
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    query = """
+        UPDATE contratos SET 
+            numero_catastro=%s, titular_contrato=%s, ci_titular=%s, categoria=%s, 
+            subcategoria=%s, medidor_iot=%s, fecha_contrato=%s, diametro_conexion=%s, 
+            tipo_servicio=%s, estado_contrato=%s
+        WHERE numero_contrato=%s;
+    """
+    cur.execute(query, (
+        datos.get('numero_catastro'), datos.get('titular_contrato'), datos.get('ci_titular'),
+        datos.get('categoria'), datos.get('subcategoria'), datos.get('medidor_iot') or None,
+        datos.get('fecha_contrato') or None, datos.get('diametro_conexion'),
+        datos.get('tipo_servicio'), datos.get('estado_contrato'), numero_contrato
+    ))
+    
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def eliminar_contrato_db(numero_contrato):
+    """Elimina definitivamente un registro de contrato de la base de datos"""
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    query = "DELETE FROM contratos WHERE numero_contrato = %s;"
+    cur.execute(query, (numero_contrato,))
+    
+    conn.commit()
+    cur.close()
+    conn.close()

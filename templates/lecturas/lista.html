@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lecturas.css') }}">
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-clipboard-check text-primary"></i> Registro de Lecturas</h2>
+        <div>
+            <a href="/app/registrar" class="btn btn-outline-primary me-2 shadow-sm">
+                <i class="fas fa-mobile-alt"></i> Vista Móvil
+            </a>
+            <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#modalRegistro">
+                <i class="fas fa-plus"></i> Nueva Lectura
+            </button>
+        </div>
+    </div>
+    
+    <form action="/lecturas/lista" method="GET" class="mb-4">
+        <div class="input-group shadow-sm">
+            <input type="text" name="q" class="form-control" placeholder="Buscar por medidor IoT..." value="{{ busqueda or '' }}">
+            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Buscar</button>
+            <a href="/lecturas/lista" class="btn btn-secondary">Limpiar</a>
+        </div>
+    </form>
+
+    <div class="table-container shadow-sm">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Medidor</th>
+                    <th>Lec. Anterior</th>
+                    <th>Lec. Actual</th>
+                    <th>Fecha</th>
+                    <th>Radiobase</th>
+                    <th>Pago</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if lecturas %}
+                    {% for l in lecturas %}
+                    <tr>
+                        <td>{{ l[0] }}</td>
+                        <td><span class="badge bg-info text-dark">{{ l[1] }}</span></td>
+                        <td>{{ l[2] }} m³</td>
+                        <td>{{ l[3] }} m³</td>
+                        <td>{{ l[4].strftime('%d/%m/%Y %H:%M') if l[4] else 'N/A' }}</td>
+                        <td>{{ l[5] }}</td>
+                        <td>{{ l[6].strftime('%d/%m/%Y') if l[6] else 'Pendiente' }}</td>
+                        <td class="text-center">
+                            <a href="/lecturas/eliminar/{{ l[0] }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este registro?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="8" class="text-center py-4">No hay datos registrados.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalRegistro" tabindex="-1">
+    <div class="modal-dialog">
+        <form action="/lecturas/guardar" method="POST" class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Registrar Nueva Lectura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">ID Medidor IoT</label>
+                    <input name="medidor" class="form-control" placeholder="Ej. 7D:16:0E..." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Lectura Anterior</label>
+                    <input name="lec_anterior" type="number" step="0.01" class="form-control" placeholder="0.00" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Lectura Actual</label>
+                    <input name="lec_actual" type="number" step="0.01" class="form-control" placeholder="0.00" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">ID Radiobase</label>
+                    <input name="radiobase" class="form-control" placeholder="Opcional">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Guardar Lectura</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
