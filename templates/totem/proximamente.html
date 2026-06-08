@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo }}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/totem.css') }}">
+</head>
+<body>
+
+<div class="contenedor">
+
+    <div class="card">
+
+        <div class="titulo">
+            <h1>🚧</h1>
+            <h2>{{ titulo }}</h2>
+            <p>Módulo en desarrollo</p>
+        </div>
+
+        <a href="/totem" class="boton-menu">
+            VOLVER AL MENÚ
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

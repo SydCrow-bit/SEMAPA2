@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta por C.I.</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/totem.css') }}">
+</head>
+<body>
+
+<div class="contenedor">
+
+    <div class="card">
+
+        <div class="titulo">
+            <h1>💧 SEMAPA</h1>
+            <h2>Consulta por Carnet de Identidad</h2>
+            <p>Ingrese el C.I. del titular del contrato</p>
+        </div>
+
+        <form action="/totem/buscar-ci" method="POST">
+
+            <input
+                type="text"
+                id="valor_busqueda"
+                name="valor_busqueda"
+                placeholder="Ingrese C.I."
+                autocomplete="off"
+                required
+            >
+
+            <!-- TECLADO NUMERICO -->
+
+            <div class="teclado">
+
+                <button type="button" onclick="agregarValor('1')">1</button>
+                <button type="button" onclick="agregarValor('2')">2</button>
+                <button type="button" onclick="agregarValor('3')">3</button>
+
+                <button type="button" onclick="agregarValor('4')">4</button>
+                <button type="button" onclick="agregarValor('5')">5</button>
+                <button type="button" onclick="agregarValor('6')">6</button>
+
+                <button type="button" onclick="agregarValor('7')">7</button>
+                <button type="button" onclick="agregarValor('8')">8</button>
+                <button type="button" onclick="agregarValor('9')">9</button>
+
+                <button
+                    type="button"
+                    class="btn-limpiar"
+                    onclick="limpiarValor()">
+                    C
+                </button>
+
+                <button type="button" onclick="agregarValor('0')">
+                    0
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-borrar"
+                    onclick="borrarValor()">
+                    ⌫
+                </button>
+
+            </div>
+
+            <button type="submit" class="btn-consultar">
+                CONSULTAR
+            </button>
+
+        </form>
+
+        {% if resultado %}
+
+        <div class="resultado">
+
+            <h2>📋 Información del Contrato</h2>
+
+            <div class="grid-datos">
+
+                <div class="dato">
+                    <span>Contrato</span>
+                    <strong>{{ resultado.contrato }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Titular</span>
+                    <strong>{{ resultado.titular }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>C.I.</span>
+                    <strong>{{ resultado.ci }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Categoría</span>
+                    <strong>{{ resultado.categoria }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Subcategoría</span>
+                    <strong>{{ resultado.subcategoria }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Estado</span>
+                    <strong>{{ resultado.estado }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Medidor</span>
+                    <strong>{{ resultado.medidor }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Lectura Anterior</span>
+                    <strong>{{ resultado.lectura_anterior }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Lectura Actual</span>
+                    <strong>{{ resultado.lectura_actual }}</strong>
+                </div>
+
+                <div class="dato consumo">
+                    <span>Consumo Actual</span>
+                    <strong>{{ resultado.consumo }} m³</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Fecha Lectura</span>
+                    <strong>{{ resultado.fecha }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        {% if historial %}
+
+        <div class="resultado">
+
+            <h2>📊 Historial de Consumo</h2>
+
+            <div class="grid-datos">
+
+                {% for item in historial %}
+
+                <div class="dato">
+
+                    <span>Fecha</span>
+                    <strong>{{ item.fecha }}</strong>
+
+                    <br><br>
+
+                    <span>Lectura Anterior</span>
+                    <strong>{{ item.lectura_anterior }}</strong>
+
+                    <br><br>
+
+                    <span>Lectura Actual</span>
+                    <strong>{{ item.lectura_actual }}</strong>
+
+                    <br><br>
+
+                    <span>Consumo</span>
+                    <strong>{{ item.consumo }} m³</strong>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        {% if buscado and not resultado %}
+
+        <div class="mensaje-error">
+            ❌ No se encontraron datos para el C.I. ingresado.
+        </div>
+
+        {% endif %}
+
+        <br>
+
+        <a href="/totem" class="btn-volver">
+            ⬅ VOLVER AL MENÚ
+        </a>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/teclado.js') }}"></script>
+
+</body>
+</html>

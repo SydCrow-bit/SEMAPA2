@@ -1,0 +1,249 @@
+/* ==========================================================================
+   RESET GENERAL Y BASE
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b67b2;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.2);
+}
+
+/* ==========================================================================
+   TÍTULOS y ENCABEZADOS
+   ========================================================================== */
+.titulo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.titulo h1 {
+    color: #005baa;
+    font-size: 48px;
+}
+
+.titulo h2 {
+    color: #333;
+    font-size: 28px;
+    margin-top: 5px;
+}
+
+.titulo p {
+    color: #666;
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   MENÚ / TÓTEM INTERACTIVO
+   ========================================================================== */
+.menu-totem {
+    display: grid;
+    gap: 15px;
+}
+
+.boton-menu {
+    text-decoration: none;
+    text-align: center;
+    background: #005baa;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.boton-menu:hover {
+    background: #004080;
+}
+
+/* ==========================================================================
+   FORMULARIOS E INPUTS
+   ========================================================================== */
+input {
+    width: 100%;
+    padding: 15px;
+    font-size: 22px;
+    border: 2px solid #005baa;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* ==========================================================================
+   TECLADOS VIRTUALES (PANTALLA TÁCTIL)
+   ========================================================================== */
+/* Teclado Numérico */
+.teclado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.teclado button {
+    height: 60px;
+    border: none;
+    border-radius: 10px;
+    background: #005baa;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Teclado Alfanumérico Completo */
+.teclado-completo {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.teclado-completo button {
+    height: 45px;
+    border: none;
+    border-radius: 8px;
+    background: #005baa;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-limpiar {
+    background: #ffc107 !important;
+    color: black !important;
+}
+
+.btn-borrar {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+/* ==========================================================================
+   BOTONES DE ACCIÓN
+   ========================================================================== */
+.btn-consultar {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #28a745;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-volver {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    background: #6c757d;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+/* ==========================================================================
+   SECCIÓN DE RESULTADOS DE CONSULTA
+   ========================================================================== */
+.resultado {
+    margin-top: 25px;
+}
+
+.resultado h2 {
+    text-align: center;
+    color: #005baa;
+    margin-bottom: 20px;
+}
+
+.grid-datos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.dato {
+    background: #eef7ff;
+    border-left: 5px solid #005baa;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.dato span {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.dato strong {
+    font-size: 18px;
+}
+
+.consumo {
+    background: #d4edda;
+    border-left: 5px solid #28a745;
+}
+
+.mensaje-error {
+    margin-top: 20px;
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.pie {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+}
+
+/* ==========================================================================
+   DISEÑO RESPONSIVO (VISTA MÓVIL)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .titulo h1 {
+        font-size: 36px;
+    }
+
+    .titulo h2 {
+        font-size: 22px;
+    }
+
+    .teclado-completo {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .teclado-completo button {
+        height: 40px;
+        font-size: 16px;
+    }
+}

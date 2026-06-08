@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEMAPA - Tótem Ciudadano</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/totem.css') }}">
+</head>
+<body>
+
+<div class="contenedor">
+
+    <div class="card">
+
+        <div class="titulo">
+            <h1>💧 SEMAPA</h1>
+            <h2>Tótem Ciudadano</h2>
+            <p>Seleccione una opción</p>
+        </div>
+
+        <div class="menu-totem">
+
+            <a href="/totem/contrato" class="boton-menu">
+                CONSULTAR POR CONTRATO
+            </a>
+
+            <a href="/totem/medidor" class="boton-menu">
+                CONSULTAR POR MEDIDOR
+            </a>
+
+            <a href="/totem/ci" class="boton-menu">
+                CONSULTAR POR C.I.
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

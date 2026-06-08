@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta por Medidor</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/totem.css') }}">
+</head>
+<body>
+
+<div class="contenedor">
+
+    <div class="card">
+
+        <div class="titulo">
+            <h1>💧 SEMAPA</h1>
+            <h2>Consulta por Medidor</h2>
+            <p>Ingrese el número del medidor IoT</p>
+        </div>
+
+        <form action="/totem/buscar-medidor" method="POST">
+
+            <input
+                type="text"
+                id="valor_busqueda"
+                name="valor_busqueda"
+                placeholder="Ingrese Medidor IoT"
+                autocomplete="off"
+                required
+            >
+            <div class="teclado-completo">
+
+    <!-- FILA 1 -->
+    <button type="button" onclick="agregarValor('A')">A</button>
+    <button type="button" onclick="agregarValor('B')">B</button>
+    <button type="button" onclick="agregarValor('C')">C</button>
+    <button type="button" onclick="agregarValor('D')">D</button>
+    <button type="button" onclick="agregarValor('E')">E</button>
+    <button type="button" onclick="agregarValor('F')">F</button>
+    <button type="button" onclick="agregarValor('G')">G</button>
+
+    <!-- FILA 2 -->
+    <button type="button" onclick="agregarValor('H')">H</button>
+    <button type="button" onclick="agregarValor('I')">I</button>
+    <button type="button" onclick="agregarValor('J')">J</button>
+    <button type="button" onclick="agregarValor('K')">K</button>
+    <button type="button" onclick="agregarValor('L')">L</button>
+    <button type="button" onclick="agregarValor('M')">M</button>
+    <button type="button" onclick="agregarValor('N')">N</button>
+
+    <!-- FILA 3 -->
+    <button type="button" onclick="agregarValor('O')">O</button>
+    <button type="button" onclick="agregarValor('P')">P</button>
+    <button type="button" onclick="agregarValor('Q')">Q</button>
+    <button type="button" onclick="agregarValor('R')">R</button>
+    <button type="button" onclick="agregarValor('S')">S</button>
+    <button type="button" onclick="agregarValor('T')">T</button>
+    <button type="button" onclick="agregarValor('U')">U</button>
+
+    <!-- FILA 4 -->
+    <button type="button" onclick="agregarValor('V')">V</button>
+    <button type="button" onclick="agregarValor('W')">W</button>
+    <button type="button" onclick="agregarValor('X')">X</button>
+    <button type="button" onclick="agregarValor('Y')">Y</button>
+    <button type="button" onclick="agregarValor('Z')">Z</button>
+    <button type="button" onclick="agregarValor(':')">:</button>
+    <button type="button" onclick="agregarValor('-')">-</button>
+
+    <!-- NUMEROS -->
+    <button type="button" onclick="agregarValor('1')">1</button>
+    <button type="button" onclick="agregarValor('2')">2</button>
+    <button type="button" onclick="agregarValor('3')">3</button>
+    <button type="button" onclick="agregarValor('4')">4</button>
+    <button type="button" onclick="agregarValor('5')">5</button>
+    <button type="button" onclick="agregarValor('6')">6</button>
+    <button type="button" onclick="agregarValor('7')">7</button>
+
+    <button type="button" onclick="agregarValor('8')">8</button>
+    <button type="button" onclick="agregarValor('9')">9</button>
+    <button type="button" onclick="agregarValor('0')">0</button>
+
+    <button type="button"
+            class="btn-limpiar"
+            onclick="limpiarValor()">
+        C
+    </button>
+
+    <button type="button"
+            class="btn-borrar"
+            onclick="borrarValor()">
+        ⌫
+    </button>
+
+</div>
+            <button type="submit" class="btn-consultar">
+                CONSULTAR
+            </button>
+
+        </form>
+
+        {% if resultado %}
+
+        <div class="resultado">
+
+            <h2>📋 Información del Contrato</h2>
+
+            <div class="grid-datos">
+
+                <div class="dato">
+                    <span>Contrato</span>
+                    <strong>{{ resultado.contrato }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Titular</span>
+                    <strong>{{ resultado.titular }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>C.I.</span>
+                    <strong>{{ resultado.ci }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Categoría</span>
+                    <strong>{{ resultado.categoria }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Subcategoría</span>
+                    <strong>{{ resultado.subcategoria }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Estado</span>
+                    <strong>{{ resultado.estado }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Medidor</span>
+                    <strong>{{ resultado.medidor }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Lectura Anterior</span>
+                    <strong>{{ resultado.lectura_anterior }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Lectura Actual</span>
+                    <strong>{{ resultado.lectura_actual }}</strong>
+                </div>
+
+                <div class="dato consumo">
+                    <span>Consumo Actual</span>
+                    <strong>{{ resultado.consumo }} m³</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Fecha Lectura</span>
+                    <strong>{{ resultado.fecha }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        {% if historial %}
+
+        <div class="resultado">
+
+            <h2>📊 Historial de Consumo</h2>
+
+            <div class="grid-datos">
+
+                {% for item in historial %}
+
+                <div class="dato">
+
+                    <span>Fecha</span>
+                    <strong>{{ item.fecha }}</strong>
+
+                    <br><br>
+
+                    <span>Lectura Anterior</span>
+                    <strong>{{ item.lectura_anterior }}</strong>
+
+                    <br><br>
+
+                    <span>Lectura Actual</span>
+                    <strong>{{ item.lectura_actual }}</strong>
+
+                    <br><br>
+
+                    <span>Consumo</span>
+                    <strong>{{ item.consumo }} m³</strong>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        {% if buscado and not resultado %}
+
+        <div class="mensaje-error">
+            ❌ No se encontró ningún medidor con ese código.
+        </div>
+
+        {% endif %}
+
+        <br>
+
+        <a href="/totem" class="btn-volver">
+            ⬅ VOLVER AL MENÚ
+        </a>
+
+    </div>
+
+</div>
+<script src="{{ url_for('static', filename='js/teclado.js') }}"></script>
+</body>
+</html>

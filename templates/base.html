@@ -12,15 +12,15 @@
 </head>
 <body class="bg-light">
 
-    <aside class="sidebar shadow-lg">
-        <div class="sidebar__header p-4 text-center">
+    <aside class="sidebar shadow-lg d-flex flex-column" style="height: 100vh; fixed: top; left: 0;">
+        <div class="sidebar__header p-4 text-center flex-shrink-0">
             <i class="fas fa-droplet fs-1 text-primary mb-2"></i>
             <h2 class="sidebar__title fs-4 fw-bold text-white m-0">SEMAPA <span class="text-info">IoT</span></h2>
         </div>
         
-        <hr class="text-secondary mx-3">
+        <hr class="text-secondary mx-3 my-1 flex-shrink-0">
 
-        <nav class="sidebar__nav p-3">
+        <nav class="sidebar__nav p-3 flex-grow-1 overflow-auto">
             <p class="text-uppercase text-secondary small fw-bold mb-3 px-3">Estratégico</p>
             <a href="/dashboard/alcaldia" class="sidebar__nav-item d-flex align-items-center mb-2">
                 <i class="fas fa-city me-3"></i> Alcaldía
@@ -36,18 +36,28 @@
             <a href="/contratos/lista" class="sidebar__nav-item d-flex align-items-center mb-2">
                 <i class="fas fa-file-invoice me-3"></i> Contratos
             </a>
-            <a href="/preavisos/lista" class="sidebar__nav-item d-flex align-items-center mb-2">
-                <i class="fas fa-envelope-open-text me-3"></i> Preavisos
-            </a>
             <a href="/lecturas/lista" class="sidebar__nav-item d-flex align-items-center mb-2">
                 <i class="fas fa-clipboard-check me-3"></i> Registro Lecturas
             </a>
 
-            <p class="text-uppercase text-secondary small fw-bold mt-4 mb-3 px-3">Sistema</p>
-            <a href="/logout" class="sidebar__nav-item sidebar__nav-item--logout d-flex align-items-center">
-                <i class="fas fa-sign-out-alt me-3"></i> Cerrar Sesión
+            <p class="text-uppercase text-secondary small fw-bold mt-4 mb-3 px-3">Operaciones de Campo</p>
+            <a href="/app/registrar" target="_blank" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-mobile-alt me-3 text-info"></i> App Inspector (Móvil)
+            </a>
+
+            <p class="text-uppercase text-secondary small fw-bold mt-4 mb-3 px-3">Atención / Terminal</p>
+            <a href="/totem" target="_blank" class="sidebar__nav-item d-flex align-items-center mb-2">
+                <i class="fas fa-desktop me-3"></i> Tótem Interactivo
             </a>
         </nav>
+
+        <hr class="text-secondary mx-3 my-1 flex-shrink-0">
+
+        <div class="p-3 flex-shrink-0">
+            <a href="/logout" class="sidebar__nav-item sidebar__nav-item--logout d-flex align-items-center m-0">
+                <i class="fas fa-sign-out-alt me-3"></i> Cerrar Sesión
+            </a>
+        </div>
     </aside>
 
     <main class="main-content">

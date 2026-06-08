@@ -10,6 +10,12 @@
     --danger-red: #c53030;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     display: flex;
     min-height: 100vh;
@@ -25,9 +31,11 @@ body {
     background-color: var(--sidebar-bg);
     color: #ffffff;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Cambiado a columna elástica para controlar cabecera, cuerpo y pie */
     position: fixed;
     height: 100vh;
+    top: 0;
+    left: 0;
     z-index: 1000;
 }
 
@@ -41,6 +49,28 @@ body {
 /* ==========================================
    3. NAVEGACIÓN (SIDEBAR)
    ========================================== */
+/* Zona intermedia contenedora de los links que activará el scrollbar */
+.sidebar__nav {
+    overflow-y: auto;          /* Activa scroll vertical si se desborda */
+    scrollbar-width: thin;     /* Scrollbar estilizado para Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* Personalización del scrollbar en navegadores Webkit (Chrome, Safari, Edge) */
+.sidebar__nav::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar__nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+.sidebar__nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Estilos de los ítems de navegación */
 .sidebar__nav-item {
     color: var(--text-muted);
     text-decoration: none;
@@ -55,7 +85,7 @@ body {
 .sidebar__nav-item:hover {
     background-color: var(--sidebar-hover);
     color: var(--accent-info);
-    padding-left: 25px;
+    padding-left: 25px; /* Animación de desplazamiento que ya tenías */
 }
 
 .sidebar__nav-item i {
@@ -63,16 +93,16 @@ body {
     text-align: center;
 }
 
+/* Variación exclusiva para el botón Cerrar Sesión fijo abajo */
 .sidebar__nav-item--logout:hover {
     background-color: var(--danger-red);
     color: white;
+    padding-left: 20px; /* Evita que se mueva en el pie de página para mantener simetría */
 }
 
 /* ==========================================
-   4. COMPONENTES GLOBALES (Opcional)
+   4. COMPONENTES GLOBALES
    ========================================== */
-/* Aquí puedes poner estilos para botones o tarjetas 
-   que se repitan en todo el sitio */
 .card-shadow {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     border: none;
