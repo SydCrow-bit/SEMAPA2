@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800 fw-bold">
+                <i class="fas fa-file-pdf me-2 text-danger"></i>Reportes PDF
+            </h1>
+            <p class="text-muted small mb-0">Descarga documentos operativos generados con datos actuales de la base.</p>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-3 text-danger">
+                            <i class="fas fa-chart-pie fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Resumen general</h5>
+                            <p class="text-muted small mb-3">Contratos, predios, medidores, consumo acumulado y ultimas lecturas.</p>
+                            <a href="{{ url_for('reportes.descargar_resumen_general') }}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-download me-2"></i>Descargar PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                            <i class="fas fa-map-location-dot fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Consumo por zona</h5>
+                            <p class="text-muted small mb-3">Ranking de zonas y distritos con contratos, consumo y promedio.</p>
+                            <a href="{{ url_for('reportes.descargar_consumo_zonas') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download me-2"></i>Descargar PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success">
+                            <i class="fas fa-file-contract fa-lg"></i>
+                        </div>
+                        <div class="w-100">
+                            <h5 class="fw-bold mb-1">Ficha por contrato</h5>
+                            <p class="text-muted small mb-3">Datos del titular, infraestructura, ultima lectura e historial reciente.</p>
+                            <form class="d-flex gap-2" onsubmit="this.action='/reportes/pdf/contrato/' + encodeURIComponent(this.numero_contrato.value)">
+                                <input class="form-control form-control-sm" name="numero_contrato" placeholder="Numero contrato" required>
+                                <button class="btn btn-success btn-sm" type="submit">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

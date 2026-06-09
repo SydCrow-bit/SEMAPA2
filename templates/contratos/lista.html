@@ -94,6 +94,9 @@
                                 <button class="btn btn-sm btn-light border btn-action text-primary" title="Editar" onclick="editarContrato('{{ c.numero_contrato }}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                <a class="btn btn-sm btn-light border btn-action text-danger" title="PDF" href="{{ url_for('reportes.descargar_ficha_contrato', numero_contrato=c.numero_contrato) }}">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
                                 <button class="btn btn-sm btn-light border btn-action text-danger" title="Eliminar" onclick="eliminarContrato('{{ c.numero_contrato }}')">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
